@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniGreat-Sender · 多协议调试发送面板</title>
+<style>
+:root { --bg:#0f172a; --panel:#1e293b; --border:#334155; --fg:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --ok:#4ade80; --err:#f87171; --warn:#fbbf24; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; font-size:14px; }
+header { display:flex; align-items:center; gap:12px; padding:12px 20px; background:var(--panel); border-bottom:1px solid var(--border); }
+header h1 { font-size:16px; margin:0; }
+header .badge { color:var(--muted); font-size:12px; }
+.layout { display:grid; grid-template-columns:380px 1fr; gap:16px; padding:16px 20px; }
+@media(max-width:900px){ .layout { grid-template-columns:1fr; } }
+.panel { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:14px; }
+.panel h2 { margin:0 0 12px; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+label { display:block; margin:8px 0 3px; color:var(--muted); font-size:12px; }
+input, select, textarea { width:100%; background:#0b1220; border:1px solid var(--border); color:var(--fg); border-radius:6px; padding:7px 9px; font-size:13px; }
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent); }
+textarea { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+.row { display:flex; gap:8px; }
+.row > div { flex:1; }
+button { background:var(--accent); color:#06283a; border:none; border-radius:6px; padding:9px 14px; font-weight:600; cursor:pointer; font-size:13px; }
+button.secondary { background:var(--border); color:var(--fg); }
+button:hover { filter:brightness(1.1); }
+.btnbar { display:flex; gap:8px; margin-top:14px; }
+.group { border:1px dashed var(--border); border-radius:6px; padding:8px 10px; margin-top:8px; }
+.group[hidden] { display:none; }
+#log { font-family:ui-monospace,monospace; font-size:12px; line-height:1.6; height:520px; overflow-y:auto; white-space:pre-wrap; word-break:break-all; }
+.entry { border-bottom:1px solid var(--border); padding:8px 4px; }
+.entry .head { color:var(--muted); font-size:11px; }
+.entry.ok { border-left:3px solid var(--ok); }
+.entry.error { border-left:3px solid var(--err); }
+.entry.timeout { border-left:3px solid var(--warn); }
+.tabs { display:flex; gap:4px; margin-bottom:10px; }
+.tabs button { background:transparent; color:var(--muted); border:1px solid var(--border); font-weight:400; padding:5px 12px; }
+.tabs button.active { background:var(--accent); color:#06283a; border-color:var(--accent); font-weight:600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚡ MiniGreat-Sender</h1>
+  <span class="badge">全方面多协议请求调试发送工具</span>
+</header>
+
+<div class="layout">
+  <div class="panel">
+    <h2>发送配置</h2>
+    <label>协议</label>
+    <select id="protocol"></select>
+
+    <div id="groups">
+      <div class="group" data-p="common">
+        <label>超时</label>
+        <input id="timeout" placeholder="如 5s (留空用默认)">
+      </div>
+
+      <div class="group" data-p="tcp udp" hidden>
+        <label>远程地址 (host:port)</label>
+        <input id="remote" placeholder="192.168.1.100:9000">
+      </div>
+
+      <div class="group" data-p="http ws" hidden>
+        <label>URL</label>
+        <input id="url" placeholder="http://192.168.1.100:8080/api 或 ws://...">
+        <label>HTTP 方法</label>
+        <input id="method" placeholder="GET / POST / PUT / DELETE ...">
+        <label>自定义请求头 (每行 K:V)</label>
+        <textarea id="headers" rows="3" placeholder="Content-Type: application/json&#10;Authorization: Bearer xxx"></textarea>
+        <div class="row" style="margin-top:8px">
+          <label style="display:flex;align-items:center;gap:6px;margin:0">
+            <input type="checkbox" id="insecure" style="width:auto"> 跳过TLS校验
+          </label>
+        </div>
+      </div>
+
+      <div class="group" data-p="mqtt" hidden>
+        <label>Broker</label>
+        <input id="broker" placeholder="tcp://192.168.1.100:1883">
+        <div class="row">
+          <div><label>主题 Topic</label><input id="topic" placeholder="test/topic"></div>
+          <div><label>QoS</label><select id="qos"><option>0</option><option>1</option><option>2</option></select></div>
+        </div>
+        <label>Client ID (留空自动)</label>
+        <input id="client" placeholder="">
+        <div class="row">
+          <div><label>用户名</label><input id="user"></div>
+          <div><label>密码</label><input id="pass" type="password"></div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label style="display:flex;align-items:center;gap:6px;margin:0">
+            <input type="checkbox" id="retain" style="width:auto"> Retain
+          </label>
+        </div>
+      </div>
+
+      <div class="group" data-p="modbus" hidden>
+        <label>模式: 留空 RemoteAddr=TCP / 填 Device=RTU</label>
+        <div class="row">
+          <div><label>TCP 地址</label><input id="remote2" placeholder="192.168.1.100:502"></div>
+          <div><label>RTU 设备</label><input id="device2" placeholder="/dev/ttyUSB0"></div>
+        </div>
+        <div class="row">
+          <div><label>功能码</label><select id="func">
+            <option value="01">01 读线圈</option><option value="02">02 读离散输入</option>
+            <option value="03" selected>03 读保持寄存器</option><option value="04">04 读输入寄存器</option>
+            <option value="05">05 写单线圈</option><option value="06">06 写单寄存器</option>
+            <option value="0F">0F 写多线圈</option><option value="10">10 写多寄存器</option>
+          </select></div>
+          <div><label>从机ID</label><input id="unit" value="1"></div>
+        </div>
+        <div class="row">
+          <div><label>起始地址</label><input id="mbaddr" value="0"></div>
+          <div><label>数量</label><input id="mbqty" value="10"></div>
+        </div>
+        <label>写入值 (逗号分隔, 05/06/0F/10 用)</label>
+        <input id="mbvalues" placeholder="1,2,3">
+        <label>RTU 串口参数</label>
+        <div class="row">
+          <div><label>波特率</label><input id="mbbaud" value="9600"></div>
+          <div><label>校验</label><select id="mbparity"><option>N</option><option>E</option><option>O</option></select></div>
+        </div>
+      </div>
+
+      <div class="group" data-p="serial rf" hidden>
+        <label>串口设备</label>
+        <input id="device" placeholder="/dev/ttyUSB0 或 /dev/ttyS0">
+        <div class="row">
+          <div><label>波特率</label><input id="baud" value="115200"></div>
+          <div><label>数据位</label><select id="databits"><option>8</option><option>7</option></select></div>
+          <div><label>校验</label><select id="parity"><option>N</option><option>E</option><option>O</option></select></div>
+          <div><label>停止位</label><select id="stopbits"><option>1</option><option>2</option></select></div>
+        </div>
+        <label style="margin-top:8px;color:var(--warn)">rf 协议会自动追加 \r\n (AT 行结尾)</label>
+      </div>
+
+      <div class="group" data-p="can" hidden>
+        <label>接口</label>
+        <input id="iface" placeholder="can0 或 vcan0">
+        <div class="row">
+          <div><label>CAN ID</label><input id="canid" placeholder="0x123"></div>
+          <div><label>数据 (≤8字节)</label><input id="candata" placeholder="AABB CC"></div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" id="canext" style="width:auto"> 扩展帧</label>
+          <label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" id="canrtr" style="width:auto"> 远程帧</label>
+        </div>
+      </div>
+
+      <div class="group" data-p="spi" hidden>
+        <label>设备</label>
+        <input id="spidev" placeholder="/dev/spidev0.0">
+        <div class="row">
+          <div><label>模式</label><input id="spimode" value="0"></div>
+          <div><label>位宽</label><input id="spibits" value="8"></div>
+          <div><label>频率Hz</label><input id="spispeed" value="1000000"></div>
+        </div>
+      </div>
+
+      <div class="group" data-p="i2c" hidden>
+        <div class="row">
+          <div><label>总线 /dev/i2c-N</label><input id="i2cbus" value="1"></div>
+          <div><label>从机地址</label><input id="i2caddr" placeholder="0x48"></div>
+        </div>
+        <div class="row">
+          <div><label>寄存器 (-1 不带)</label><input id="i2creg" value="-1"></div>
+          <div><label>读回字节数 (0=不读)</label><input id="i2cqty" value="0"></div>
+        </div>
+      </div>
+
+      <div class="group" data-p="ble" hidden>
+        <label>目标 MAC (留空自动扫描首个)</label>
+        <input id="bleaddr" placeholder="AA:BB:CC:DD:EE:FF">
+        <div class="row">
+          <div><label>服务 UUID</label><input id="blesvc" placeholder="0000ffe0-0000-1000-8000-00805f9b34fb"></div>
+          <div><label>特征 UUID</label><input id="blechar" placeholder="0000ffe1-0000-1000-8000-00805f9b34fb"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;margin:0">
+          <input type="checkbox" id="bleread" style="width:auto"> 写后读回
+        </label>
+      </div>
+    </div>
+
+    <label style="margin-top:10px">载荷 (hex / 文本 / base64 三选一)</label>
+    <textarea id="payload" rows="4" placeholder="AABBCCDD  (hex, 可含空格)" spellcheck="false"></textarea>
+    <div class="row" style="margin-top:8px">
+      <div><label>载荷格式</label>
+        <select id="fmt">
+          <option value="hex">Hex 十六进制</option>
+          <option value="txt">Text 文本</option>
+          <option value="b64">Base64</option>
+        </select>
+      </div>
+    </div>
+    <div class="btnbar">
+      <button id="send" style="flex:1">🚀 发送</button>
+      <button id="clear" class="secondary">清空日志</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="tabs">
+      <button id="tab-log" class="active">实时日志</button>
+      <button id="tab-resp">最近响应</button>
+    </div>
+    <div id="log"></div>
+    <div id="resp" hidden></div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let ws = null;
+let lastResp = null;
+
+function groupFor(p){ for(const g of document.querySelectorAll('.group')){ g.hidden = !g.dataset.p.split(' ').includes(p); } }
+
+async function loadProtocols(){
+  const r = await fetch('/api/protocols'); const list = await r.json();
+  const sel = $('protocol');
+  sel.innerHTML = list.map(p=>`<option value="${p.name}">${p.name} — ${p.description}</option>`).join('');
+  sel.onchange = () => groupFor(sel.value);
+  groupFor(sel.value);
+}
+
+function buildReq(){
+  const p = $('protocol').value;
+  const hex = $('fmt').value==='hex' ? $('payload').value : '';
+  const txt = $('fmt').value==='txt' ? $('payload').value : '';
+  const b64 = $('fmt').value==='b64' ? $('payload').value : '';
+  const req = { protocol:p, timeout:$('timeout').value || '', payloadHex:hex, payloadTxt:txt, payloadB64:b64 };
+  if(['tcp','udp'].includes(p)) req.remoteAddr=$('remote').value;
+  if(['http','ws'].includes(p)){ req.url=$('url').value; req.method=$('method').value; req.insecure=$('insecure').checked;
+    const h={}; for(const line of $('headers').value.split('\n')){ const i=line.indexOf(':'); if(i>0) h[line.slice(0,i).trim()]=line.slice(i+1).trim(); } req.headers=h; }
+  if(p==='mqtt'){ req.broker=$('broker').value; req.topic=$('topic').value; req.qos=+$('qos').value; req.clientId=$('client').value; req.username=$('user').value; req.password=$('pass').value; req.retain=$('retain').checked; }
+  if(p==='modbus'){ req.remoteAddr=$('remote2').value; req.serialDevice=$('device2').value; req.modbusFunc=parseInt($('func').value,16); req.modbusUnitId=+$('unit').value; req.modbusAddr=+$('mbaddr').value; req.modbusQuantity=+$('mbqty').value; req.modbusBaud=+$('mbbaud').value; req.modbusParity=$('mbparity').value;
+    const vals=$('mbvalues').value.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)); if(vals.length) req.modbusValues=vals; }
+  if(['serial','rf'].includes(p)){ req.serialDevice=$('device').value; req.serialBaud=+$('baud').value; req.serialDataBits=+$('databits').value; req.serialParity=$('parity').value; req.serialStopBits=+$('stopbits').value; }
+  if(p==='can'){ req.canInterface=$('iface').value; req.canId=parseInt($('canid').value||'0',16); req.canExt=$('canext').checked; req.canRtr=$('canrtr').checked; }
+  if(p==='spi'){ req.spiDevice=$('spidev').value; req.spiMode=+$('spimode').value; req.spiBits=+$('spibits').value; req.spiSpeed=+$('spispeed').value; }
+  if(p==='i2c'){ req.i2cBus=+$('i2cbus').value; req.i2cAddr=parseInt($('i2caddr').value||'0',16); req.i2cRegister=+$('i2creg').value; req.modbusQuantity=+$('i2cqty').value; }
+  if(p==='ble'){ req.bleAddress=$('bleaddr').value; req.bleService=$('blesvc').value; req.bleChar=$('blechar').value; req.bleReadResp=$('bleread').checked; }
+  return req;
+}
+
+function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+
+function appendLog(entry){
+  const cls = entry.response && entry.response.status==='error' ? 'error' : (entry.response && entry.response.status==='timeout' ? 'timeout':'ok');
+  const div = document.createElement('div'); div.className='entry '+cls;
+  const req = entry.request || {};
+  div.innerHTML = `<div class="head">${esc(entry.time)} · ${esc(req.protocol)}${req.remoteAddr?' · '+esc(req.remoteAddr):''}${req.topic?' · '+esc(req.topic):''}${req.url?' · '+esc(req.url):''}</div>`;
+  if(entry.response){
+    if(entry.response.dataTxt) div.innerHTML += `<div>▶ ${esc(entry.response.dataTxt)}</div>`;
+    if(entry.response.dataHex) div.innerHTML += `<div style="color:var(--muted)">HEX: ${esc(entry.response.dataHex)}</div>`;
+    if(entry.response.status==='error') div.innerHTML += `<div style="color:var(--err)">✗ ${esc(entry.response.error)}</div>`;
+    if(entry.response.meta && entry.response.meta.statusCode) div.innerHTML += `<div style="color:var(--muted)">HTTP ${esc(entry.response.meta.statusCode)}</div>`;
+  }
+  $('log').prepend(div);
+  lastResp = entry.response;
+  renderResp(entry.response);
+}
+
+function renderResp(resp){
+  if(!resp) return;
+  $('resp').innerHTML = `<pre style="white-space:pre-wrap;word-break:break-all">${esc(JSON.stringify(resp,null,2))}</pre>`;
+}
+
+$('send').onclick = async ()=>{
+  const req = buildReq();
+  $('send').disabled = true; $('send').textContent='发送中...';
+  try{
+    const r = await fetch('/api/send', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(req)});
+    const resp = await r.json();
+    appendLog({time:new Date().toLocaleTimeString('zh-CN',{hour12:false})+'.000', request:req, response:resp});
+  }catch(e){ appendLog({time:new Date().toLocaleTimeString('zh-CN',{hour12:false})+'.000', request:req, response:{status:'error', error:e.message}}); }
+  finally{ $('send').disabled=false; $('send').textContent='🚀 发送'; }
+};
+$('clear').onclick = ()=> $('log').innerHTML='';
+$('tab-log').onclick = ()=>{ $('tab-log').classList.add('active'); $('tab-resp').classList.remove('active'); $('log').hidden=false; $('resp').hidden=true; };
+$('tab-resp').onclick = ()=>{ $('tab-resp').classList.add('active'); $('tab-log').classList.remove('active'); $('log').hidden=true; $('resp').hidden=false; };
+
+function connectWS(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  ws = new WebSocket(proto+'://'+location.host+'/api/ws');
+  ws.onclose = ()=> setTimeout(connectWS, 2000);
+  ws.onmessage = ev => { try{ appendLog(JSON.parse(ev.data)); }catch(e){} };
+}
+
+(async function init(){ await loadProtocols(); connectWS(); })();
+</script>
+</body>
+</html>
