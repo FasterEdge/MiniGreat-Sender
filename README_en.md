@@ -147,4 +147,4 @@ MiniGreat-Sender/
 
 ### 8. License
 
-MIT
+Apache License 2.0
