@@ -1,3 +1,8 @@
+// ─────────────────────────────────────────────────────────────
+// FasterEdge 开源项目
+// Github: https://github.com/FasterEdge
+// Gitee:  https://gitee.com/FasterEdge
+// ─────────────────────────────────────────────────────────────
 // Package core 定义 MiniGreat-Sender 的核心抽象：
 // 协议驱动接口(Driver)、请求(Request)、响应(Response)与协议注册表。
 package core

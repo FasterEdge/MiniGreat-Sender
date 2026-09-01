@@ -1,3 +1,8 @@
+// ─────────────────────────────────────────────────────────────
+// FasterEdge 开源项目
+// Github: https://github.com/FasterEdge
+// Gitee:  https://gitee.com/FasterEdge
+// ─────────────────────────────────────────────────────────────
 // Package registry 汇总注册全部发送协议驱动。
 package registry
 

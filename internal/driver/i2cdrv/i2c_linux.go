@@ -1,3 +1,8 @@
+// ─────────────────────────────────────────────────────────────
+// FasterEdge 开源项目
+// Github: https://github.com/FasterEdge
+// Gitee:  https://gitee.com/FasterEdge
+// ─────────────────────────────────────────────────────────────
 //go:build linux
 
 // Package i2cdrv 实现 Linux I2C 主设备读写驱动 (/dev/i2c-N)。

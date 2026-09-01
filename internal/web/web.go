@@ -1,3 +1,8 @@
+// ─────────────────────────────────────────────────────────────
+// FasterEdge 开源项目
+// Github: https://github.com/FasterEdge
+// Gitee:  https://gitee.com/FasterEdge
+// ─────────────────────────────────────────────────────────────
 // Package web 提供 MiniGreat-Sender 本地 Web 调试面板:
 //  - 静态页面 (内嵌)
 //  - POST /api/send      执行一次发送 (JSON body = core.Request)
