@@ -10,7 +10,7 @@ import (
 	"minigreat-sender/internal/cli"
 )
 
-var version = "1.0.20260901" // 可通过 -ldflags "-X main.version=..." 覆盖
+var version = "1.0.20260902" // 可通过 -ldflags "-X main.version=..." 覆盖
 
 func main() {
 	os.Exit(cli.Run(os.Args, os.Stdout, os.Stderr))
