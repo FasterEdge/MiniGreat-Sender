@@ -1,3 +1,4 @@
+// FasterEdge 开源项目 - Github: https://github.com/FasterEdge - Gitee: https://gitee.com/FasterEdge
 //go:build linux
 
 // Package candrv 实现 SocketCAN 发送驱动 (Linux only)。

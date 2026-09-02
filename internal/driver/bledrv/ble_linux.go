@@ -1,3 +1,4 @@
+// FasterEdge 开源项目 - Github: https://github.com/FasterEdge - Gitee: https://gitee.com/FasterEdge
 //go:build linux
 
 // Package bledrv 实现 Linux BlueZ BLE 客户端 (经 D-Bus 操作 org.bluez)。

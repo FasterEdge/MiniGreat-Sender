@@ -1,3 +1,4 @@
+// FasterEdge 开源项目 - Github: https://github.com/FasterEdge - Gitee: https://gitee.com/FasterEdge
 // Package cli 提供命令行子命令式发送工具。
 // 用法示例:
 //
