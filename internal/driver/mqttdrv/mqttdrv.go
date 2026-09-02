@@ -8,7 +8,7 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // MQTTDriver 实现 MQTT 客户端: 连接 broker 并向主题发布消息。
@@ -18,7 +18,9 @@ type MQTTDriver struct{}
 func (MQTTDriver) Name() string { return "mqtt" }
 
 // Description 返回描述。
-func (MQTTDriver) Description() string { return "MQTT 客户端: 连接 broker, 向主题发布消息 (QoS 0/1/2)" }
+func (MQTTDriver) Description() string {
+	return "MQTT 客户端: 连接 broker, 向主题发布消息 (QoS 0/1/2)"
+}
 
 // Validate 校验参数。
 func (MQTTDriver) Validate(req *core.Request) error {

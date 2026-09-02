@@ -4,10 +4,10 @@
 // Gitee:  https://gitee.com/FasterEdge
 // ─────────────────────────────────────────────────────────────
 // Package web 提供 MiniGreat-Sender 本地 Web 调试面板:
-//  - 静态页面 (内嵌)
-//  - POST /api/send      执行一次发送 (JSON body = core.Request)
-//  - GET  /api/protocols 列出协议
-//  - WS   /api/ws        实时日志/历史推送
+//   - 静态页面 (内嵌)
+//   - POST /api/send      执行一次发送 (JSON body = core.Request)
+//   - GET  /api/protocols 列出协议
+//   - WS   /api/ws        实时日志/历史推送
 package web
 
 import (
@@ -22,8 +22,8 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"minigreat-sender/internal/core"
-	"minigreat-sender/internal/registry"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/registry"
 )
 
 //go:embed static/*

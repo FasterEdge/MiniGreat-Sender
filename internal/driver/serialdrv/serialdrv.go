@@ -7,7 +7,7 @@ import (
 
 	"go.bug.st/serial"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // SerialDriver 实现串口(UART/RS232/RS485)发送。
@@ -17,7 +17,9 @@ type SerialDriver struct{}
 func (SerialDriver) Name() string { return "serial" }
 
 // Description 返回描述。
-func (SerialDriver) Description() string { return "串口(UART/RS232/RS485): 打开串口发送数据并读取响应" }
+func (SerialDriver) Description() string {
+	return "串口(UART/RS232/RS485): 打开串口发送数据并读取响应"
+}
 
 // Validate 校验参数。
 func (SerialDriver) Validate(req *core.Request) error {

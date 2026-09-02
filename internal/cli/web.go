@@ -15,7 +15,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"minigreat-sender/internal/web"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/web"
 )
 
 // openBrowserCmd 尝试用系统默认浏览器打开 URL。

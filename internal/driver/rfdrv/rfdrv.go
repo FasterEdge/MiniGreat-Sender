@@ -8,7 +8,7 @@ import (
 
 	"go.bug.st/serial"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // RFDriver 实现射频模块(LoRa/433MHz/Zigbee/蓝牙串口透传等)经串口 AT 指令控制。

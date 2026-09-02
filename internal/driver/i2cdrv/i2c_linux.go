@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // I2CDriver 实现 I2C 从机读写。
@@ -26,7 +26,9 @@ type I2CDriver struct{}
 func (I2CDriver) Name() string { return "i2c" }
 
 // Description 返回描述。
-func (I2CDriver) Description() string { return "I2C 主设备: /dev/i2c-N, 指定从机地址读写(支持寄存器寻址)" }
+func (I2CDriver) Description() string {
+	return "I2C 主设备: /dev/i2c-N, 指定从机地址读写(支持寄存器寻址)"
+}
 
 // Validate 校验参数。
 func (I2CDriver) Validate(req *core.Request) error {

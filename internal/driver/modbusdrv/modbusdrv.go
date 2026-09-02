@@ -8,7 +8,7 @@ import (
 
 	"github.com/goburrow/modbus"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // ModbusDriver 实现 Modbus RTU 与 TCP 客户端。
@@ -18,7 +18,9 @@ type ModbusDriver struct{}
 func (ModbusDriver) Name() string { return "modbus" }
 
 // Description 返回描述。
-func (ModbusDriver) Description() string { return "Modbus RTU/TCP 客户端: 01/02/03/04/05/06/0F/10 功能码读写" }
+func (ModbusDriver) Description() string {
+	return "Modbus RTU/TCP 客户端: 01/02/03/04/05/06/0F/10 功能码读写"
+}
 
 // Validate 校验参数。
 func (ModbusDriver) Validate(req *core.Request) error {

@@ -12,7 +12,7 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // SPIDriver 实现 SPI 半双工写 + 读(全双工)。
@@ -22,7 +22,9 @@ type SPIDriver struct{}
 func (SPIDriver) Name() string { return "spi" }
 
 // Description 返回描述。
-func (SPIDriver) Description() string { return "SPI 主设备: /dev/spidevX.Y, 模式/频率/位宽可配, 全双工读写" }
+func (SPIDriver) Description() string {
+	return "SPI 主设备: /dev/spidevX.Y, 模式/频率/位宽可配, 全双工读写"
+}
 
 // Validate 校验参数。
 func (SPIDriver) Validate(req *core.Request) error {
@@ -46,16 +48,16 @@ const (
 )
 
 type spiIocTransfer struct {
-	TxBuf        uint64
-	RxBuf        uint64
-	Len          uint32
-	SpeedHz      uint32
-	DelayUsecs   uint16
-	BitsPerWord  uint8
-	CsChange     uint8
-	TxNBits      uint8
-	RxNBits      uint8
-	Pad          uint16
+	TxBuf       uint64
+	RxBuf       uint64
+	Len         uint32
+	SpeedHz     uint32
+	DelayUsecs  uint16
+	BitsPerWord uint8
+	CsChange    uint8
+	TxNBits     uint8
+	RxNBits     uint8
+	Pad         uint16
 }
 
 // Send 执行一次 SPI 传输: 写入 tx 同时读回 rx。
@@ -120,12 +122,12 @@ func (SPIDriver) Send(ctx context.Context, req *core.Request) (*core.Response, e
 		DataHex:   core.FormatDataHex(rx),
 		DataTxt:   core.FormatDataTxt(rx),
 		Meta: map[string]any{
-			"device": req.SPIDevice,
-			"mode":   mode,
-			"bits":   bits,
+			"device":  req.SPIDevice,
+			"mode":    mode,
+			"bits":    bits,
 			"speedHz": speed,
-			"txLen":  len(tx),
-			"rxLen":  len(rx),
+			"txLen":   len(tx),
+			"rxLen":   len(rx),
 		},
 	}
 	return resp, nil

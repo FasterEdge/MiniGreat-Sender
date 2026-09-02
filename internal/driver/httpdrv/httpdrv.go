@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // HTTPDriver 实现 HTTP/HTTPS 请求发送, 支持全部请求方法。
@@ -20,7 +20,9 @@ type HTTPDriver struct{}
 func (HTTPDriver) Name() string { return "http" }
 
 // Description 返回描述。
-func (HTTPDriver) Description() string { return "HTTP/HTTPS 客户端: 任意请求方法 + 自定义头 + 载荷" }
+func (HTTPDriver) Description() string {
+	return "HTTP/HTTPS 客户端: 任意请求方法 + 自定义头 + 载荷"
+}
 
 // Methods 返回 http 支持的方法列表(供 UI 提示)。
 func (HTTPDriver) Methods() []string {

@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // I2CDriver 非 Linux 平台占位。

@@ -1,4 +1,4 @@
-module minigreat-sender
+module github.com/FasterEdge/MiniGreat-Sender
 
 go 1.23
 

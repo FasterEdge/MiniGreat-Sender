@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // TCPDriver 实现 TCP 发送: 连接 -> 发送 -> 读取响应(直到超时)。
@@ -17,7 +17,9 @@ type TCPDriver struct{}
 func (TCPDriver) Name() string { return "tcp" }
 
 // Description 返回描述。
-func (TCPDriver) Description() string { return "TCP 客户端: 连接远程端口并发送数据, 读取响应" }
+func (TCPDriver) Description() string {
+	return "TCP 客户端: 连接远程端口并发送数据, 读取响应"
+}
 
 // Validate 校验参数。
 func (TCPDriver) Validate(req *core.Request) error {

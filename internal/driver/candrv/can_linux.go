@@ -14,7 +14,7 @@ import (
 
 	"golang.org/x/sys/unix"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // CANDriver 实现 CAN 总线报文发送。
@@ -24,7 +24,9 @@ type CANDriver struct{}
 func (CANDriver) Name() string { return "can" }
 
 // Description 返回描述。
-func (CANDriver) Description() string { return "CAN 总线 (SocketCAN): can0/vcan0 发送标准/扩展/远程帧" }
+func (CANDriver) Description() string {
+	return "CAN 总线 (SocketCAN): can0/vcan0 发送标准/扩展/远程帧"
+}
 
 // Validate 校验参数。
 func (CANDriver) Validate(req *core.Request) error {
@@ -43,12 +45,12 @@ type canFrame struct {
 }
 
 const (
-	CAN_EFF_FLAG  = 0x80000000 // 扩展帧标志
-	CAN_RTR_FLAG  = 0x40000000 // 远程帧标志
-	CAN_ERR_FLAG  = 0x20000000
-	SOL_CAN_BASE  = 100
-	CAN_RAW       = 1
-	CAN_RAW_FILTER = 1
+	CAN_EFF_FLAG       = 0x80000000 // 扩展帧标志
+	CAN_RTR_FLAG       = 0x40000000 // 远程帧标志
+	CAN_ERR_FLAG       = 0x20000000
+	SOL_CAN_BASE       = 100
+	CAN_RAW            = 1
+	CAN_RAW_FILTER     = 1
 	CAN_RAW_ERR_FILTER = 2
 )
 

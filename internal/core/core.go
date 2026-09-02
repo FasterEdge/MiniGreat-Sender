@@ -19,8 +19,8 @@ type Request struct {
 	Protocol string `json:"protocol" yaml:"protocol"`
 
 	// ---- 通用 ----
-	Timeout    time.Duration `json:"timeout" yaml:"timeout"`         // 超时(如 5s)
-	Payload    []byte        `json:"payload,omitempty" yaml:"-"`     // 原始载荷(已解码)
+	Timeout    time.Duration `json:"timeout" yaml:"timeout"`                 // 超时(如 5s)
+	Payload    []byte        `json:"payload,omitempty" yaml:"-"`             // 原始载荷(已解码)
 	PayloadHex string        `json:"payloadHex,omitempty" yaml:"payloadHex"` // 十六进制文本
 	PayloadTxt string        `json:"payloadTxt,omitempty" yaml:"payloadTxt"` // 普通文本
 	PayloadB64 string        `json:"payloadB64,omitempty" yaml:"payloadB64"` // base64 文本
@@ -29,10 +29,10 @@ type Request struct {
 	RemoteAddr string `json:"remoteAddr,omitempty" yaml:"remoteAddr"` // host:port
 
 	// ---- http/ws ----
-	URL     string            `json:"url,omitempty" yaml:"url"`
-	Method  string            `json:"method,omitempty" yaml:"method"` // GET/POST/...
-	Headers map[string]string `json:"headers,omitempty" yaml:"headers"`
-	Insecure bool             `json:"insecure,omitempty" yaml:"insecure"` // 跳过TLS校验
+	URL      string            `json:"url,omitempty" yaml:"url"`
+	Method   string            `json:"method,omitempty" yaml:"method"` // GET/POST/...
+	Headers  map[string]string `json:"headers,omitempty" yaml:"headers"`
+	Insecure bool              `json:"insecure,omitempty" yaml:"insecure"` // 跳过TLS校验
 
 	// ---- mqtt ----
 	Broker   string `json:"broker,omitempty" yaml:"broker"` // tcp://host:port 或 ssl://...
@@ -44,27 +44,27 @@ type Request struct {
 	Retain   bool   `json:"retain,omitempty" yaml:"retain"`
 
 	// ---- modbus ----
-	ModbusUnitID    byte   `json:"modbusUnitId,omitempty" yaml:"modbusUnitId"`
-	ModbusFunc      byte   `json:"modbusFunc,omitempty" yaml:"modbusFunc"` // 01/02/03/04/05/06/0F/10
-	ModbusAddr      uint16 `json:"modbusAddr,omitempty" yaml:"modbusAddr"`
-	ModbusQuantity  uint16 `json:"modbusQuantity,omitempty" yaml:"modbusQuantity"`
-	ModbusValues    []uint16 `json:"modbusValues,omitempty" yaml:"modbusValues"`
-	ModbusBaud      int    `json:"modbusBaud,omitempty" yaml:"modbusBaud"`           // RTU模式波特率
-	ModbusDataBits  int    `json:"modbusDataBits,omitempty" yaml:"modbusDataBits"`
-	ModbusParity    string `json:"modbusParity,omitempty" yaml:"modbusParity"`       // N/E/O
-	ModbusStopBits  int    `json:"modbusStopBits,omitempty" yaml:"modbusStopBits"`
+	ModbusUnitID   byte     `json:"modbusUnitId,omitempty" yaml:"modbusUnitId"`
+	ModbusFunc     byte     `json:"modbusFunc,omitempty" yaml:"modbusFunc"` // 01/02/03/04/05/06/0F/10
+	ModbusAddr     uint16   `json:"modbusAddr,omitempty" yaml:"modbusAddr"`
+	ModbusQuantity uint16   `json:"modbusQuantity,omitempty" yaml:"modbusQuantity"`
+	ModbusValues   []uint16 `json:"modbusValues,omitempty" yaml:"modbusValues"`
+	ModbusBaud     int      `json:"modbusBaud,omitempty" yaml:"modbusBaud"` // RTU模式波特率
+	ModbusDataBits int      `json:"modbusDataBits,omitempty" yaml:"modbusDataBits"`
+	ModbusParity   string   `json:"modbusParity,omitempty" yaml:"modbusParity"` // N/E/O
+	ModbusStopBits int      `json:"modbusStopBits,omitempty" yaml:"modbusStopBits"`
 
 	// ---- serial ----
-	SerialDevice string `json:"serialDevice,omitempty" yaml:"serialDevice"` // /dev/ttyUSB0
-	SerialBaud   int    `json:"serialBaud,omitempty" yaml:"serialBaud"`
-	SerialDataBits int  `json:"serialDataBits,omitempty" yaml:"serialDataBits"`
-	SerialParity string `json:"serialParity,omitempty" yaml:"serialParity"`
-	SerialStopBits int  `json:"serialStopBits,omitempty" yaml:"serialStopBits"`
+	SerialDevice   string `json:"serialDevice,omitempty" yaml:"serialDevice"` // /dev/ttyUSB0
+	SerialBaud     int    `json:"serialBaud,omitempty" yaml:"serialBaud"`
+	SerialDataBits int    `json:"serialDataBits,omitempty" yaml:"serialDataBits"`
+	SerialParity   string `json:"serialParity,omitempty" yaml:"serialParity"`
+	SerialStopBits int    `json:"serialStopBits,omitempty" yaml:"serialStopBits"`
 
 	// ---- ble ----
-	BLEAddress  string `json:"bleAddress,omitempty" yaml:"bleAddress"` // 目标MAC, 为空则扫描选取
-	BLEService  string `json:"bleService,omitempty" yaml:"bleService"` // 服务UUID
-	BLEChar     string `json:"bleChar,omitempty" yaml:"bleChar"`       // 特征UUID
+	BLEAddress  string `json:"bleAddress,omitempty" yaml:"bleAddress"`   // 目标MAC, 为空则扫描选取
+	BLEService  string `json:"bleService,omitempty" yaml:"bleService"`   // 服务UUID
+	BLEChar     string `json:"bleChar,omitempty" yaml:"bleChar"`         // 特征UUID
 	BLEReadResp bool   `json:"bleReadResp,omitempty" yaml:"bleReadResp"` // 写后是否读回
 
 	// ---- can ----
@@ -80,20 +80,20 @@ type Request struct {
 	SPISpeed  int64  `json:"spiSpeed,omitempty" yaml:"spiSpeed"`
 
 	// ---- i2c ----
-	I2CBus    int    `json:"i2cBus,omitempty" yaml:"i2cBus"`       // /dev/i2c-N 的 N
-	I2CAddr   int    `json:"i2cAddr,omitempty" yaml:"i2cAddr"`     // 7位从机地址
-	I2CRegister int  `json:"i2cRegister,omitempty" yaml:"i2cRegister"` // -1 表示不写寄存器
+	I2CBus      int `json:"i2cBus,omitempty" yaml:"i2cBus"`           // /dev/i2c-N 的 N
+	I2CAddr     int `json:"i2cAddr,omitempty" yaml:"i2cAddr"`         // 7位从机地址
+	I2CRegister int `json:"i2cRegister,omitempty" yaml:"i2cRegister"` // -1 表示不写寄存器
 }
 
 // Response 是一次发送的完整结果。
 type Response struct {
-	Protocol string `json:"protocol"`
-	Status   string `json:"status"` // ok / error / timeout
-	LatencyMS int64 `json:"latencyMs"`
-	Data     []byte `json:"data,omitempty"`
-	DataHex  string `json:"dataHex,omitempty"`
-	DataTxt  string `json:"dataTxt,omitempty"`
-	Error    string `json:"error,omitempty"`
+	Protocol  string `json:"protocol"`
+	Status    string `json:"status"` // ok / error / timeout
+	LatencyMS int64  `json:"latencyMs"`
+	Data      []byte `json:"data,omitempty"`
+	DataHex   string `json:"dataHex,omitempty"`
+	DataTxt   string `json:"dataTxt,omitempty"`
+	Error     string `json:"error,omitempty"`
 	// Meta 存放协议附加信息, 如 mqtt packet id / modbus 响应寄存器值 / ble 设备名
 	Meta map[string]any `json:"meta,omitempty"`
 }

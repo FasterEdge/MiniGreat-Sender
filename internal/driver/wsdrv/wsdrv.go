@@ -13,7 +13,7 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 // WSDriver 实现 WebSocket 客户端: 连接 -> 发送文本/二进制消息 -> 读取响应。
@@ -23,7 +23,9 @@ type WSDriver struct{}
 func (WSDriver) Name() string { return "ws" }
 
 // Description 返回描述。
-func (WSDriver) Description() string { return "WebSocket 客户端: ws://wss:// 连接, 发送文本或二进制消息" }
+func (WSDriver) Description() string {
+	return "WebSocket 客户端: ws://wss:// 连接, 发送文本或二进制消息"
+}
 
 // Validate 校验参数。
 func (WSDriver) Validate(req *core.Request) error {

@@ -7,7 +7,7 @@ package main
 import (
 	"os"
 
-	"minigreat-sender/internal/cli"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/cli"
 )
 
 var version = "1.0.20260902" // 可通过 -ldflags "-X main.version=..." 覆盖

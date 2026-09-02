@@ -8,10 +8,11 @@ import (
 )
 
 // ResolvePayload 按优先级从 req 取载荷:
-//   1. Payload(已解码字节, 由调用方填充)
-//   2. PayloadHex
-//   3. PayloadB64
-//   4. PayloadTxt
+//  1. Payload(已解码字节, 由调用方填充)
+//  2. PayloadHex
+//  3. PayloadB64
+//  4. PayloadTxt
+//
 // 优先级顺序: 显式字节 > Hex > B64 > Txt。
 func ResolvePayload(req *Request) ([]byte, error) {
 	if req.Payload != nil {

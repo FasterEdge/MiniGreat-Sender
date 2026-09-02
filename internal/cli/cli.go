@@ -23,8 +23,8 @@ import (
 	"strings"
 	"time"
 
-	"minigreat-sender/internal/core"
-	"minigreat-sender/internal/registry"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/registry"
 )
 
 // Run 解析 os.Args 并执行。返回进程退出码。
@@ -97,57 +97,57 @@ func cmdList(w *os.File) int {
 
 // sendFlags 承载命令行解析出的请求。
 type sendFlags struct {
-	proto     string
-	timeout   string
-	hex       string
-	txt       string
-	b64       string
-	jsonFile  string
+	proto    string
+	timeout  string
+	hex      string
+	txt      string
+	b64      string
+	jsonFile string
 
-	remote    string
-	url       string
-	method    string
-	headers   multiFlag
-	insecure  bool
+	remote   string
+	url      string
+	method   string
+	headers  multiFlag
+	insecure bool
 
-	broker    string
-	client    string
-	user      string
-	pass      string
-	topic     string
-	qos       int
-	retain    bool
+	broker string
+	client string
+	user   string
+	pass   string
+	topic  string
+	qos    int
+	retain bool
 
-	funcCode  string
-	addr      int
-	qty       int
-	values    string
-	unit      int
+	funcCode string
+	addr     int
+	qty      int
+	values   string
+	unit     int
 
-	device    string
-	baud      int
-	databits  int
-	parity    string
-	stopbits  int
+	device   string
+	baud     int
+	databits int
+	parity   string
+	stopbits int
 
-	iface     string
-	canID     string
-	ext       bool
-	rtr       bool
+	iface string
+	canID string
+	ext   bool
+	rtr   bool
 
 	spiDevice string
 	mode      int
 	bits      int
 	speed     int64
 
-	bus       int
-	i2cAddr   int
-	reg       int
+	bus     int
+	i2cAddr int
+	reg     int
 
-	bleAddr   string
-	svc       string
-	chr       string
-	readresp  bool
+	bleAddr  string
+	svc      string
+	chr      string
+	readresp bool
 }
 
 type multiFlag []string

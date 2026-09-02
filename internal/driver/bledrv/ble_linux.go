@@ -12,15 +12,15 @@ import (
 
 	"github.com/godbus/dbus/v5"
 
-	"minigreat-sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
 )
 
 const (
-	bluezName      = "org.bluez"
-	adapterIf      = "org.bluez.Adapter1"
-	deviceIf       = "org.bluez.Device1"
-	gattServiceIf  = "org.bluez.GattService1"
-	gattCharIf     = "org.bluez.GattCharacteristic1"
+	bluezName       = "org.bluez"
+	adapterIf       = "org.bluez.Adapter1"
+	deviceIf        = "org.bluez.Device1"
+	gattServiceIf   = "org.bluez.GattService1"
+	gattCharIf      = "org.bluez.GattCharacteristic1"
 	objectManagerIf = "org.freedesktop.DBus.ObjectManager"
 )
 
@@ -103,12 +103,12 @@ func (BLEDriver) Send(ctx context.Context, req *core.Request) (*core.Response, e
 	resp.DataHex = core.FormatDataHex(written)
 	resp.DataTxt = core.FormatDataTxt(written)
 	resp.Meta = map[string]any{
-		"address":   target,
+		"address":    target,
 		"devicePath": devPath,
-		"service":   req.BLEService,
-		"char":      req.BLEChar,
-		"written":   len(payload),
-		"read":      len(written),
+		"service":    req.BLEService,
+		"char":       req.BLEChar,
+		"written":    len(payload),
+		"read":       len(written),
 	}
 	if len(written) == 0 {
 		resp.DataTxt = "(已写入特征, 未读回)"
@@ -118,10 +118,10 @@ func (BLEDriver) Send(ctx context.Context, req *core.Request) (*core.Response, e
 
 // bleDevice 描述一个扫描到的设备。
 type bleDevice struct {
-	Path    string
-	Address string
-	Name    string
-	RSSI    int16
+	Path      string
+	Address   string
+	Name      string
+	RSSI      int16
 	Connected bool
 }
 
@@ -164,10 +164,10 @@ func scanDevices(conn *dbus.Conn, adapterPath dbus.ObjectPath, timeout time.Dura
 				}
 				seen[addr] = true
 				dev := bleDevice{
-					Path:    string(path),
-					Address: addr,
-					Name:    getStr(d, "Name"),
-					RSSI:    getI16(d, "RSSI"),
+					Path:      string(path),
+					Address:   addr,
+					Name:      getStr(d, "Name"),
+					RSSI:      getI16(d, "RSSI"),
 					Connected: getBool(d, "Connected"),
 				}
 				found = append(found, dev)

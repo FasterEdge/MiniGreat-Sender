@@ -7,18 +7,18 @@
 package registry
 
 import (
-	"minigreat-sender/internal/core"
-	"minigreat-sender/internal/driver/bledrv"
-	"minigreat-sender/internal/driver/candrv"
-	"minigreat-sender/internal/driver/httpdrv"
-	"minigreat-sender/internal/driver/i2cdrv"
-	"minigreat-sender/internal/driver/modbusdrv"
-	"minigreat-sender/internal/driver/mqttdrv"
-	"minigreat-sender/internal/driver/netdrv"
-	"minigreat-sender/internal/driver/rfdrv"
-	"minigreat-sender/internal/driver/serialdrv"
-	"minigreat-sender/internal/driver/spidrv"
-	"minigreat-sender/internal/driver/wsdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/core"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/bledrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/candrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/httpdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/i2cdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/modbusdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/mqttdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/netdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/rfdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/serialdrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/spidrv"
+	"github.com/FasterEdge/MiniGreat-Sender/internal/driver/wsdrv"
 )
 
 // New 创建并注册全部驱动。
