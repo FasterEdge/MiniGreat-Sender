@@ -64,6 +64,10 @@ func (WSDriver) Send(ctx context.Context, req *core.Request) (*core.Response, er
 	}
 	defer conn.Close()
 
+	// 单条消息大小上限 (与其他驱动 1MB 上限一致): gorilla 默认
+	// MaxMessageSize=0 无限制, 恶意服务器可发超大 frame 耗尽内存。
+	conn.SetReadLimit(1 << 20)
+
 	resp := &core.Response{Protocol: "ws", Status: "ok", LatencyMS: 0}
 	if len(payload) > 0 {
 		// 二进制消息与文本消息由调用方控制, 这里统一按二进制发送, 兼容大部分调试场景。

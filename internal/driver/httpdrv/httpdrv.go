@@ -84,7 +84,9 @@ func (HTTPDriver) Send(ctx context.Context, req *core.Request) (*core.Response, 
 		return nil, fmt.Errorf("http: 请求失败: %w", err)
 	}
 	defer hresp.Body.Close()
-	data, _ := io.ReadAll(hresp.Body)
+	// 响应体大小上限 (与其他驱动 1MB 上限一致): 恶意/异常服务器可返回
+	// 无限大响应体, 无上限 ReadAll 会耗尽内存。
+	data, _ := io.ReadAll(io.LimitReader(hresp.Body, 1<<20))
 
 	resp := &core.Response{
 		Protocol:  "http",

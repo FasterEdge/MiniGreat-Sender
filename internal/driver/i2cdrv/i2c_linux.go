@@ -63,6 +63,13 @@ func (I2CDriver) Send(ctx context.Context, req *core.Request) (*core.Response, e
 		timeout = 2 * time.Second
 	}
 
+	// 单次读上限提前校验: I2C 单次传输受总线限制 (~32KB), 打开设备前
+	// 拒绝超大 Quantity — 防用户可控参数造成超大一次性分配 (内存耗尽
+	// DoS), 且避免无谓的设备打开。
+	if req.ModbusQuantity > 4096 {
+		return nil, fmt.Errorf("i2c: 单次读取上限 4096 字节, 当前 %d", req.ModbusQuantity)
+	}
+
 	dev := fmt.Sprintf("/dev/i2c-%d", req.I2CBus)
 	f, err := os.OpenFile(dev, os.O_RDWR, 0)
 	if err != nil {
