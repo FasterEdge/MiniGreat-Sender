@@ -21,6 +21,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -359,9 +360,7 @@ func buildRequest(f *sendFlags) (*core.Request, error) {
 }
 
 func parseUint(s string, base int) (uint64, error) {
-	var v uint64
-	_, err := fmt.Sscanf(s, "%d", &v)
-	return v, err
+	return strconv.ParseUint(s, base, 64)
 }
 
 func printResponse(w *os.File, resp *core.Response) {
