@@ -36,7 +36,15 @@ type Server struct {
 	upgrader websocket.Upgrader
 	mu       sync.Mutex
 	history  []HistoryEntry
-	clients  map[*websocket.Conn]bool
+	clients  map[*wsClient]bool
+}
+
+// wsClient 为每个 WS 客户端持有的连接与其专属写锁。
+// gorilla/websocket 不允许并发写同一连接, 事件推送可能并发,
+// 因此每个连接必须有独立写锁 (否则数据竞态/panic)。
+type wsClient struct {
+	conn *websocket.Conn
+	mu   sync.Mutex
 }
 
 // HistoryEntry 一条历史记录。
@@ -55,7 +63,7 @@ func New(logger *slog.Logger) *Server {
 		reg:     registry.New(),
 		logger:  logger,
 		history: make([]HistoryEntry, 0, 200),
-		clients: make(map[*websocket.Conn]bool),
+		clients: make(map[*wsClient]bool),
 	}
 }
 
@@ -94,6 +102,7 @@ func (s *Server) handleSend(w http.ResponseWriter, r *http.Request) {
 		core.Request
 		Timeout json.RawMessage `json:"timeout"`
 	}
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&raw); err != nil {
 		http.Error(w, "JSON 解析失败: "+err.Error(), http.StatusBadRequest)
@@ -149,12 +158,17 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
+	// 面板 WS 只读客户端消息用于检测断线, 16KiB 上限 + 60s 读超时,
+	// 防恶意客户端发超大帧或连上不发数据永久占用 goroutine。
+	conn.SetReadLimit(1 << 16)
+	_ = conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+	wc := &wsClient{conn: conn}
 	s.mu.Lock()
-	s.clients[conn] = true
+	s.clients[wc] = true
 	s.mu.Unlock()
 	defer func() {
 		s.mu.Lock()
-		delete(s.clients, conn)
+		delete(s.clients, wc)
 		s.mu.Unlock()
 	}()
 	// 简单心跳/关闭检测
@@ -162,17 +176,20 @@ func (s *Server) handleWS(w http.ResponseWriter, r *http.Request) {
 		if _, _, err := conn.ReadMessage(); err != nil {
 			return
 		}
+		_ = conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 	}
 }
 
 // push 记录历史并广播到所有 WS 客户端。
+// 每个连接用独立写锁串行化写 (gorilla 禁止并发写), 并设 2s 写超时;
+// 慢客户端不再阻塞整个事件链, 写失败立即断开移除。
 func (s *Server) push(e HistoryEntry) {
 	s.mu.Lock()
 	s.history = append(s.history, e)
 	if len(s.history) > 500 {
 		s.history = s.history[len(s.history)-500:]
 	}
-	clients := make([]*websocket.Conn, 0, len(s.clients))
+	clients := make([]*wsClient, 0, len(s.clients))
 	for c := range s.clients {
 		clients = append(clients, c)
 	}
@@ -183,7 +200,16 @@ func (s *Server) push(e HistoryEntry) {
 		return
 	}
 	for _, c := range clients {
-		_ = c.WriteMessage(websocket.TextMessage, b) // #nosec G104 -- 面板推送失败可忽略
+		c.mu.Lock()
+		_ = c.conn.SetWriteDeadline(time.Now().Add(2 * time.Second))
+		werr := c.conn.WriteMessage(websocket.TextMessage, b)
+		c.mu.Unlock()
+		if werr != nil {
+			// 写失败 (慢/断连客户端): 移除, 避免累积阻塞后续推送
+			s.mu.Lock()
+			delete(s.clients, c)
+			s.mu.Unlock()
+		}
 	}
 }
 
