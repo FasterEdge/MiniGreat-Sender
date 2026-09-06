@@ -17,8 +17,8 @@ import (
 func TestSendQuantityLimit(t *testing.T) {
 	drv := I2CDriver{}
 	_, err := drv.Send(context.Background(), &core.Request{
-		I2CBus:        1,
-		I2CAddr:       0x50,
+		I2CBus:         1,
+		I2CAddr:        0x50,
 		ModbusQuantity: 4097,
 	})
 	if err == nil {
@@ -31,8 +31,8 @@ func TestSendQuantityLimit(t *testing.T) {
 	// 上限以内 (4096) 且无设备: 应报设备打开错误而不是上限错误 —
 	// 证明合法数量没有被误拒 (设备缺失是环境问题)。
 	_, err = drv.Send(context.Background(), &core.Request{
-		I2CBus:        1,
-		I2CAddr:       0x50,
+		I2CBus:         1,
+		I2CAddr:        0x50,
 		ModbusQuantity: 4096,
 	})
 	if err == nil {
