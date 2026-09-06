@@ -30,9 +30,10 @@ import (
 )
 
 // Run 解析 os.Args 并执行。返回进程退出码。
-func Run(args []string, stdout, stderr *os.File) int {
+// version 由 main 包经 -ldflags "-X main.version=..." 注入, 用于 version/help 显示。
+func Run(args []string, stdout, stderr *os.File, version string) int {
 	if len(args) < 2 {
-		printUsage(stderr)
+		printUsage(stderr, version)
 		return 2
 	}
 	cmd := args[1]
@@ -43,18 +44,21 @@ func Run(args []string, stdout, stderr *os.File) int {
 		return cmdSend(args[2:], stdout, stderr)
 	case "web", "w":
 		return cmdWeb(args[2:], stdout, stderr)
+	case "version", "-v", "--version":
+		fmt.Fprintln(stdout, version)
+		return 0
 	case "help", "-h", "--help":
-		printUsage(stdout)
+		printUsage(stdout, version)
 		return 0
 	default:
 		fmt.Fprintf(stderr, "未知子命令: %s\n\n", cmd)
-		printUsage(stderr)
+		printUsage(stderr, version)
 		return 2
 	}
 }
 
-func printUsage(w *os.File) {
-	fmt.Fprint(w, `MiniGreat-Sender - 全方面多协议请求调试发送工具
+func printUsage(w *os.File, version string) {
+	fmt.Fprintf(w, `MiniGreat-Sender - 全方面多协议请求调试发送工具 (版本 %s)
 
 用法:
   minigreat-sender list                    列出全部支持的协议
@@ -84,7 +88,7 @@ BLE (ble):              --addr XX:XX:XX:XX:XX:XX --service <uuid> --char <uuid> 
 
 web 子命令选项:
   --addr host:port    监听地址 (默认 127.0.0.1:8080)
-`)
+`, version)
 }
 
 func cmdList(w *os.File) int {
