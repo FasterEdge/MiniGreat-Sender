@@ -58,9 +58,12 @@ func (WSDriver) Send(ctx context.Context, req *core.Request) (*core.Response, er
 	}
 
 	start := time.Now()
-	conn, _, err := dialer.DialContext(ctx, req.URL, nil)
+	conn, handshakeResp, err := dialer.DialContext(ctx, req.URL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("ws: 连接失败: %w", err)
+	}
+	if handshakeResp != nil {
+		handshakeResp.Body.Close() // 关闭握手响应体, 避免每次连接泄漏 fd
 	}
 	defer conn.Close()
 
