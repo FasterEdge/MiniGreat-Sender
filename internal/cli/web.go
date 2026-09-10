@@ -53,14 +53,25 @@ func cmdWeb(args []string, stdout, stderr *os.File) int {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	srv := web.New(logger)
 
-	// 打印面板地址
+	// 打印面板地址; 0.0.0.0/:: 时显示真实暴露面并警告无鉴权
 	port := ln.Addr().(*net.TCPAddr).Port
 	host := "127.0.0.1"
-	if h, _, e := net.SplitHostPort(*addr); e == nil && h != "" && h != "0.0.0.0" && h != "::" {
-		host = h
+	exposed := false
+	if h, _, e := net.SplitHostPort(*addr); e == nil && h != "" {
+		if h == "0.0.0.0" || h == "::" {
+			exposed = true
+			host = h
+		} else {
+			host = h
+		}
 	}
 	panelURL := fmt.Sprintf("http://%s:%d", host, port)
 	fmt.Fprintf(stdout, "MiniGreat-Sender Web 调试面板: %s\n", panelURL)
+	if exposed {
+		// 面板无鉴权: /api/send 可远程触发任意协议发送, /api/history 回显
+		// 请求(含 MQTT 密码等凭据字段)——显式暴露必须伴随醒目警告。
+		fmt.Fprintln(stdout, "警告: 面板监听 0.0.0.0/:: 且无鉴权——所在网络内的任何主机都可调用 /api/send 触发发送、读取 /api/history, 请确认部署网络可信, 或加访问控制(防火墙/iptables)。")
+	}
 	if *openBrowser {
 		openBrowserCmd(panelURL)
 	}
