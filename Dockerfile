@@ -29,7 +29,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH} \
     -o /out/minigreat-sender .
 
 # ---------- 运行阶段 ----------
-FROM alpine:3.21
+FROM alpine:3.24
 
 # 蓝牙扫描/串口/GPIO 等需要系统工具; bluetoothctl 供 BLE 调试辅助
 RUN apk add --no-cache \
