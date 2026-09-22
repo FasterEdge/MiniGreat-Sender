@@ -1,5 +1,5 @@
 # MiniGreat-Sender Makefile
-VERSION ?= 1.0.20260902
+VERSION ?= 1.0.20260922
 BIN     := minigreat-sender
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
